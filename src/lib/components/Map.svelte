@@ -64,7 +64,6 @@
             const px_x = (player.y * -0.085) + 2155;
             const px_y = (player.x * -0.0835) + 630;
 
-            console.log({db_x: player.x, db_y: player.y, px_x, px_y})
             return {db_x: player.x, db_y: player.y, px_x, px_y};
         }
         const px_x = (player.y * -0.085) + 610;
