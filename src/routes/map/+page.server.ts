@@ -1,4 +1,4 @@
-import type { PageServerLoad } from '../../.svelte-kit/types/src/routes/$types';
+import type { PageServerLoad } from '../../../.svelte-kit/types/src/routes/map/$types';
 import { getFromDb } from '$lib';
 
 export const load: PageServerLoad = async () => {
