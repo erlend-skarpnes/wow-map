@@ -1,5 +1,6 @@
 import mariadb from 'mariadb';
-import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from '$env/static/private';
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, GAME_SERVER, GAME_PORT } from '$env/static/private';
+import net from 'node:net';
 
 export interface PlayerInfo {
 	account: string;
@@ -53,7 +54,63 @@ export const getFromDb = async (): Promise<PlayerInfo[] | undefined> => {
 		console.error('Database error:', err);
 	} finally {
 		// Release connection back to the pool if it was obtained
-		if (conn) conn.release();
+		if (conn) await conn.release();
 	}
 };
 
+export const getServerUp = async (): Promise<boolean> => {
+	return new Promise((resolve) => {
+		const socket = new net.Socket();
+
+		const onError = () => {
+			socket.destroy();
+			resolve(false);
+		};
+
+		socket.setTimeout(500);
+		socket.once('error', onError);
+		socket.once('timeout', onError);
+
+		socket.connect(parseInt(GAME_PORT), GAME_SERVER, () => {
+			socket.end();
+			resolve(true);
+		});
+	});
+}
+
+export interface ServerStatusData {
+	uptime: number;
+	isUp: boolean;
+	playersOnline: number;
+}
+
+export const getServerInfo = async (): Promise<ServerStatusData | undefined> => {
+	const isServerUp = await getServerUp();
+
+	if (!isServerUp) return {uptime: 0, isUp: isServerUp, playersOnline: 0};
+
+	let conn;
+	try {
+		conn = await pool.getConnection();
+
+		const rows = await conn.query(`
+			SELECT UNIX_TIMESTAMP() as timestamp, starttime, maxplayers
+			FROM classicrealmd.uptime
+			WHERE starttime = (SELECT MAX(starttime) FROM classicrealmd.uptime)
+		`);
+
+		const result = rows[0];
+
+		const serverStatus = {
+			uptime: Number(result.timestamp - result.starttime),
+			isUp: isServerUp,
+			playersOnline: result.maxplayers
+		}
+
+		return serverStatus;
+	} catch (err) {
+		console.error('Database error:', err);
+	} finally {
+		if (conn) await conn.release();
+	}
+}
