@@ -28,6 +28,36 @@ const pool = mariadb.createPool(dbConfig);
 
 const races = ["Human", "Orc", "Dwarf", "Night Elf", "Undead", "Tauren", "Gnome", "Troll"];
 
+export const getCharacters = async (): Promise<PlayerInfo[] | undefined> => {
+	let conn;
+	try {
+		conn = await pool.getConnection();
+
+		const rows = await conn.query(`
+			SELECT classicrealmd.account.username as account, name, race, position_x, position_y, map, level
+			FROM characters
+			JOIN classicrealmd.account ON characters.account = classicrealmd.account.id
+			WHERE classicrealmd.account.username NOT LIKE 'RNDBOT%'
+		`);
+
+		// Transform database rows to PlayerInfo objects
+		return rows.map((row: any) => ({
+			account: row.account,
+			name: row.name,
+			race: races[row.race - 1],
+			level: row.level,
+			map: row.map,
+			x: row.position_x,
+			y: row.position_y
+		}));
+	} catch (err) {
+		console.error('Database error:', err);
+	} finally {
+		// Release connection back to the pool if it was obtained
+		if (conn) await conn.release();
+	}
+}
+
 export const getFromDb = async (): Promise<PlayerInfo[] | undefined> => {
 	let conn;
 	try {
