@@ -163,20 +163,19 @@ export const getServerUp = async (): Promise<boolean> => {
 export interface ServerStatusData {
 	uptime: number;
 	isUp: boolean;
-	playersOnline: number;
 }
 
 export const getServerInfo = async (): Promise<ServerStatusData | undefined> => {
 	const isServerUp = await getServerUp();
 
-	if (!isServerUp) return {uptime: 0, isUp: isServerUp, playersOnline: 0};
+	if (!isServerUp) return {uptime: 0, isUp: isServerUp };
 
 	let conn;
 	try {
 		conn = await pool.getConnection();
 
 		const rows = await conn.query(`
-			SELECT UNIX_TIMESTAMP() as timestamp, starttime, maxplayers
+			SELECT UNIX_TIMESTAMP() as timestamp, starttime
 			FROM classicrealmd.uptime
 			WHERE starttime = (SELECT MAX(starttime) FROM classicrealmd.uptime)
 		`);
@@ -185,8 +184,7 @@ export const getServerInfo = async (): Promise<ServerStatusData | undefined> => 
 
 		const serverStatus = {
 			uptime: Number(result.timestamp - result.starttime),
-			isUp: isServerUp,
-			playersOnline: result.maxplayers
+			isUp: isServerUp
 		}
 
 		return serverStatus;
