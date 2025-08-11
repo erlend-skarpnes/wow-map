@@ -13,7 +13,7 @@
 	</script>
 	
 	<svelte:head>
-	<title>Privatservern</title>
+	<title>World of Noobs</title>
 	</svelte:head>
 	
 	<div class="flex flex-col min-h-screen">
@@ -23,7 +23,7 @@
 			<nav class="flex items-center justify-between h-16">
 				<div class="flex items-center">
 					<a href="/" class="flex items-center">
-						<span class="text-xl font-bold">Privatservern</span>
+						<span class="text-xl font-bold">World of Noobs</span>
 					</a>
 				</div>
 				
