@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { PlayerInfo } from '$lib/db';
+    import type { PlayerData } from '$lib/db';
 
     // Accept players data as a prop
-    let { players } = $props<{ players: PlayerInfo[] }>();
+    let { players } = $props<{ players: PlayerData[] }>();
 
     type MapPoint = {db_x: number, db_y: number, px_x: number, px_y: number};
 
@@ -56,7 +56,7 @@
     const eKScaleAndOffset = $derived(calculateScaleAndOffset(samplePointsEK));
     const kalimdorScaleAndOffset = $derived(calculateScaleAndOffset(samplePointsKalimdor));
 
-    const mapToPixels = (player: PlayerInfo): MapPoint => {
+    const mapToPixels = (player: PlayerData): MapPoint => {
         if (player.map === 0) {
             // const px_x = player.x - (eKScaleAndOffset.minY * eKScaleAndOffset.scaleY);
             // const px_y = player.y - ((eKScaleAndOffset.minX) * eKScaleAndOffset.scaleX);

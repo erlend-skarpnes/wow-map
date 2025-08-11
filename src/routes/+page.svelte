@@ -1,12 +1,16 @@
 <script lang="ts">
 	import  ServerStatus from '$lib/components/ServerStatus.svelte';
-	import type { ServerStatusData } from '$lib';
+	import type { AccountData, ServerStatusData } from '$lib';
+	import PlayerInfo from '$lib/components/PlayerInfo.svelte';
 
-	let { data }: { data: { serverStatus: ServerStatusData } } = $props();
+	let { data }: { data: { serverStatus: ServerStatusData, players: AccountData[] } } = $props();
 
 </script>
 
-<div class="flex flex-col justify-around md:flex-row gap-4 p-4 w-full">
-		<ServerStatus serverStatus={data.serverStatus} />
+<div>
+	Info
 </div>
-
+	<div class="flex flex-col justify-around gap-4 p-4">
+		<ServerStatus serverStatus={data.serverStatus} />
+		<PlayerInfo players={data.players} />
+	</div>

@@ -21,7 +21,7 @@
 			durationInSeconds %= unit.seconds;
 		}
 
-		return parts.length > 0 ? parts.join(", ") : "0 seconds";
+		return parts.length > 0 ? parts.slice(0, 2).join(", ") : "0 seconds";
 	};
 </script>
 
@@ -30,6 +30,5 @@
 	<p>Status: {serverStatus.isUp ? '🟢 Up' : '🔴 Down'}</p>
 	{#if serverStatus.isUp}
 		<p>Uptime: {formatDuration(serverStatus.uptime)}</p>
-		<p>Players online: {serverStatus.playersOnline}</p>
 	{/if}
 </Card>

@@ -2,7 +2,7 @@ import mariadb from 'mariadb';
 import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, GAME_SERVER, GAME_PORT } from '$env/static/private';
 import net from 'node:net';
 
-export interface PlayerInfo {
+export interface PlayerData {
 	account: string;
 	name: string;
 	race: string;
@@ -10,6 +10,20 @@ export interface PlayerInfo {
 	level: number;
 	x: number;
 	y: number;
+}
+
+export interface AccountData {
+	account: string;
+	online: boolean;
+	character: CharacterData | null;
+}
+
+export interface CharacterData {
+	name: string;
+	race: string;
+	gender: string;
+	level: number;
+	class: string;
 }
 
 // Database connection configuration
@@ -27,14 +41,52 @@ console.log('Connecting to database...');
 const pool = mariadb.createPool(dbConfig);
 
 const races = ["Human", "Orc", "Dwarf", "Night Elf", "Undead", "Tauren", "Gnome", "Troll"];
+const classes = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "DeathKnight", "Shaman", "Mage", "Warlock", "NotInUse?", "Druid"];
 
-export const getCharacters = async (): Promise<PlayerInfo[] | undefined> => {
+export const getAccounts = async (): Promise<AccountData[] | undefined> => {
 	let conn;
 	try {
 		conn = await pool.getConnection();
 
 		const rows = await conn.query(`
-			SELECT classicrealmd.account.username as account, name, race, position_x, position_y, map, level
+			SELECT a.username, c.name, c.level, c.race, c.gender, c.class, c.online
+			FROM classicrealmd.account a
+						 LEFT JOIN (SELECT account, name, level, race, gender, class, online
+												FROM classiccharacters.characters
+												WHERE online = 1) c
+											 ON a.id = c.account
+			WHERE a.username NOT LIKE 'RNDBOT%';
+		`);
+
+		return rows.map((row: any) => ({
+			account: row.username,
+			online: row.online,
+			character: row.online
+				? {
+						name: row.name,
+						race: races[row.race - 1],
+						gender: row.gender === 0 ? 'Male' : 'Female',
+						level: row.level,
+						class: classes[row.class - 1]
+					}
+				: null
+		}));
+
+	} catch (err) {
+		console.error('Database error:', err);
+	} finally {
+		// Release connection back to the pool if it was obtained
+		if (conn) await conn.release();
+	}
+};
+
+export const getCharacters = async (): Promise<PlayerData[] | undefined> => {
+	let conn;
+	try {
+		conn = await pool.getConnection();
+
+		const rows = await conn.query(`
+			SELECT classicrealmd.account.username as account, name, race, position_x, position_y, map, level, online
 			FROM characters
 			JOIN classicrealmd.account ON characters.account = classicrealmd.account.id
 			WHERE classicrealmd.account.username NOT LIKE 'RNDBOT%'
@@ -58,7 +110,7 @@ export const getCharacters = async (): Promise<PlayerInfo[] | undefined> => {
 	}
 }
 
-export const getFromDb = async (): Promise<PlayerInfo[] | undefined> => {
+export const getFromDb = async (): Promise<PlayerData[] | undefined> => {
 	let conn;
 	try {
 		conn = await pool.getConnection();

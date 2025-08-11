@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Map from '$lib/components/Map.svelte';
-	import type { PlayerInfo } from '$lib';
+	import type { PlayerData } from '$lib';
 
-	let { data }: { data: { players: PlayerInfo[] } } = $props();
+	let { data }: { data: { players: PlayerData[] } } = $props();
 
 	let showBots = $state(false);
 

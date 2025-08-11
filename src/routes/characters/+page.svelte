@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Card, Input, Button } from "flowbite-svelte";
-	import type { PlayerInfo } from '$lib';
-	let { data }: { data: { players: PlayerInfo[] } } = $props();
+	import type { PlayerData } from '$lib';
+	let { data }: { data: { players: PlayerData[] } } = $props();
 
 	console.log(data);
 
