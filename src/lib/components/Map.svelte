@@ -1,8 +1,10 @@
 <script lang="ts">
-    import type { PlayerData } from '$lib/db';
+    import type { AccountData, CharacterData, PlayerData } from '$lib/db';
 
     // Accept players data as a prop
-    let { players } = $props<{ players: PlayerData[] }>();
+    let { players }: {players: AccountData[]} = $props();
+
+    console.log(players);
 
     type MapPoint = {db_x: number, db_y: number, px_x: number, px_y: number};
 
@@ -56,7 +58,7 @@
     const eKScaleAndOffset = $derived(calculateScaleAndOffset(samplePointsEK));
     const kalimdorScaleAndOffset = $derived(calculateScaleAndOffset(samplePointsKalimdor));
 
-    const mapToPixels = (player: PlayerData): MapPoint => {
+    const mapToPixels = (player: CharacterData): MapPoint => {
         if (player.map === 0) {
             // const px_x = player.x - (eKScaleAndOffset.minY * eKScaleAndOffset.scaleY);
             // const px_y = player.y - ((eKScaleAndOffset.minX) * eKScaleAndOffset.scaleX);
@@ -74,13 +76,13 @@
     };
 
     // const playerCoordinates = samplePointsKalimdor.map(p => ({x: p.db_x, y: p.db_y, map: 1})).map(p => mapToPixels(p));
-    const playerCoordinates = $derived(players.map(player => mapToPixels(player)));
+    const playerCoordinates = $derived(players.map(player => mapToPixels(player.character)));
     // const playerCoordinates = $derived([{x: 0, y: 0, map: 0}, {x: 0, y: 0, map: 1}].map(player => mapToPixels(player)));
 
 </script>
 
 <div class="h-full w-full relative flex justify-center items-center" bind:clientWidth={containerWidth} bind:clientHeight={containerHeight}>
-    <img src="wow-map.jpg" alt="World Map" class="object-contain max-w-full max-h-full" bind:clientHeight={mapHeight} bind:clientWidth={mapWidth} />
+    <img src="wow-map.png" alt="World Map" class="object-contain max-w-full max-h-full" bind:clientHeight={mapHeight} bind:clientWidth={mapWidth} />
 
     {#each playerCoordinates as player}
         <div

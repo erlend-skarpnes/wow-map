@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Card } from 'flowbite-svelte';
+	import { Card, Heading, P } from 'flowbite-svelte';
 	import type { ServerStatusData } from '$lib';
 	let { serverStatus }: { serverStatus: ServerStatusData }  = $props();
 
@@ -26,9 +26,9 @@
 </script>
 
 <Card class="p-4 sm:p-6 md:p-8">
-	<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Server status</h5>
-	<p>Status: {serverStatus.isUp ? '🟢 Up' : '🔴 Down'}</p>
+	<Heading class="mb-2 text-2xl font-bold tracking-tight">Server status</Heading>
+	<P>Status: {serverStatus.isUp ? '🟢 Up' : '🔴 Down'}</P>
 	{#if serverStatus.isUp}
-		<p>Uptime: {formatDuration(serverStatus.uptime)}</p>
+		<P>Uptime: {formatDuration(serverStatus.uptime)}</P>
 	{/if}
 </Card>

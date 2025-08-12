@@ -1,4 +1,4 @@
-import mariadb from 'mariadb';
+import mariadb, { type PoolConfig } from 'mariadb';
 import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, GAME_SERVER, GAME_PORT } from '$env/static/private';
 import net from 'node:net';
 
@@ -24,17 +24,20 @@ export interface CharacterData {
 	gender: string;
 	level: number;
 	class: string;
+	map?: number;
+	x?: number;
+	y?: number;
 }
 
 // Database connection configuration
 const dbConfig = {
 	host: DB_HOST || 'localhost',
-	port: DB_PORT || 3306,
+	port: Number.parseInt(DB_PORT) || 3306,
 	user: DB_USER || 'root',
 	password: DB_PASSWORD || '',
 	database: DB_NAME || 'game_db',
 	connectionLimit: 5
-};
+} satisfies PoolConfig;
 
 // Create connection pool
 console.log('Connecting to database...');
@@ -55,7 +58,7 @@ export const getAccounts = async (): Promise<AccountData[] | undefined> => {
 												FROM classiccharacters.characters
 												WHERE online = 1) c
 											 ON a.id = c.account
-			WHERE a.username NOT LIKE 'RNDBOT%';
+			WHERE a.username NOT LIKE 'RNDBOT%' AND a.username NOT LIKE 'GM';
 		`);
 
 		return rows.map((row: any) => ({
@@ -70,7 +73,7 @@ export const getAccounts = async (): Promise<AccountData[] | undefined> => {
 						class: classes[row.class - 1]
 					}
 				: null
-		}));
+		} satisfies AccountData));
 
 	} catch (err) {
 		console.error('Database error:', err);
@@ -80,7 +83,7 @@ export const getAccounts = async (): Promise<AccountData[] | undefined> => {
 	}
 };
 
-export const getCharacters = async (): Promise<PlayerData[] | undefined> => {
+export const getCharacters = async (): Promise<AccountData[] | undefined> => {
 	let conn;
 	try {
 		conn = await pool.getConnection();
@@ -94,14 +97,19 @@ export const getCharacters = async (): Promise<PlayerData[] | undefined> => {
 
 		// Transform database rows to PlayerInfo objects
 		return rows.map((row: any) => ({
-			account: row.account,
-			name: row.name,
-			race: races[row.race - 1],
-			level: row.level,
-			map: row.map,
-			x: row.position_x,
-			y: row.position_y
-		}));
+			account: row.username,
+			online: row.online,
+			character: row.online
+				? {
+					name: row.name,
+					race: races[row.race - 1],
+					gender: row.gender === 0 ? 'Male' : 'Female',
+					level: row.level,
+					class: classes[row.class - 1],
+					x: row.position_x,
+					y: row.position_y
+				} : null
+		} satisfies AccountData));
 	} catch (err) {
 		console.error('Database error:', err);
 	} finally {
@@ -110,13 +118,13 @@ export const getCharacters = async (): Promise<PlayerData[] | undefined> => {
 	}
 }
 
-export const getFromDb = async (): Promise<PlayerData[] | undefined> => {
+export const getFromDb = async (): Promise<AccountData[] | undefined> => {
 	let conn;
 	try {
 		conn = await pool.getConnection();
 
 		const rows = await conn.query(`
-			SELECT classicrealmd.account.username as account, name, race, position_x, position_y, map, level
+			SELECT classicrealmd.account.username as account, online, name, race, class, position_x, position_y, map, level
 			FROM characters 
 			JOIN classicrealmd.account ON characters.account = classicrealmd.account.id
 			WHERE online = 1
@@ -125,13 +133,19 @@ export const getFromDb = async (): Promise<PlayerData[] | undefined> => {
 		// Transform database rows to PlayerInfo objects
 		return rows.map((row: any) => ({
 			account: row.account,
-			name: row.name,
-			race: races[row.race - 1],
-			level: row.level,
-			map: row.map,
-			x: row.position_x,
-			y: row.position_y
-		}));
+			online: row.online,
+			character: row.online
+				? {
+					name: row.name,
+					race: races[row.race - 1],
+					gender: row.gender === 0 ? 'Male' : 'Female',
+					level: row.level,
+					class: classes[row.class - 1],
+					map: row.map,
+					x: row.position_x,
+					y: row.position_y
+				} : null
+		} satisfies AccountData));
 	} catch (err) {
 		console.error('Database error:', err);
 	} finally {

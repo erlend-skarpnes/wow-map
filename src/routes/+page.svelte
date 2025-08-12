@@ -10,7 +10,7 @@
 </script>
 
 <div class="flex flex-row justify-center gap-16 p-8">
-	<div class="justify-around gap-4 p-4 min-w-128 max-w-2xl">
+	<div class="justify-around gap-4 p-4 max-w-2xl">
 		<Heading tag="h1" class="mb-4">Welcome to World of Noobs</Heading>
 
 		<P class="mb-2">
@@ -25,7 +25,7 @@
 		</P>
 	</div>
 
-	<div class="flex flex-col gap-4 p-4 min-w-128">
+	<div class="flex flex-col gap-4 p-4 min-w-82">
 		<ServerStatus serverStatus={data.serverStatus} />
 		<PlayerInfo players={data.players} />
 	</div>
