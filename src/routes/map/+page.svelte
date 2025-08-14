@@ -1,12 +1,14 @@
 <script lang="ts">
 	import Map from '$lib/components/Map.svelte';
-	import type { AccountData, PlayerData } from '$lib';
+	import type { AccountData } from '$lib';
 	import { Checkbox, Heading, P } from 'flowbite-svelte';
 	import PlayerCard from '$lib/components/PlayerCard.svelte';
 
 	let { data }: { data: { players: AccountData[] } } = $props();
 
 	let showBots = $state(false);
+	let activePlayerName: string | null = $state(null);
+
 
 	let players = $derived.by(() => {
 			if (showBots === false) {
@@ -15,6 +17,12 @@
 			return data.players;
 		}
 	);
+
+	let setActivePlayer = (player: AccountData | null) => {
+		activePlayerName = player?.character?.name ?? null;
+	}
+
+
 </script>
 
 <div class="flex h-screen w-full overflow-hidden">
@@ -29,7 +37,10 @@
 		</div>
 		<div class="p-4">
 			{#each players ?? [] as player}
-				<PlayerCard player={player} />
+				<div onmouseenter={() => setActivePlayer(player)} onmouseleave={() => setActivePlayer(null)} role="listitem">
+					<PlayerCard player={player} />
+				</div>
+
 			{:else}
 				<P>No players online</P>
 			{/each}
@@ -39,7 +50,7 @@
 	<!-- Map Area -->
 	<div class="flex-1">
 		<div class="h-full">
-			<Map players={players ?? []}/>
+			<Map players={players ?? []} activePlayer={activePlayerName}/>
 		</div>
 	</div>
 </div>

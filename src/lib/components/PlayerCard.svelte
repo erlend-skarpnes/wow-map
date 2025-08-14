@@ -2,7 +2,7 @@
 	import { P, Avatar, Card } from 'flowbite-svelte';
 	import type { AccountData, CharacterData } from '$lib';
 
-	let { player }: { player: AccountData } = $props();
+	let { player }: { player: AccountData} = $props();
 
 	const getPortrait = (character: CharacterData | null): string | undefined => {
 		if (character == null) return undefined;
@@ -15,7 +15,7 @@
 	};
 </script>
 
-<Card class="my-1 p-1 px-4">
+<Card class={"my-1 p-1 px-4 hover:bg-gray-400"}>
 	<div class="flex-row flex gap-2 w-full justify-between">
 		<div>
 			<P class="font-medium">{player.character?.name}</P>
