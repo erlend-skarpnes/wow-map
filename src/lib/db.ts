@@ -12,11 +12,22 @@ export interface PlayerData {
 	y: number;
 }
 
-export interface AccountData {
+export interface OnlineAccountData<TCharacter> {
 	account: string;
-	online: boolean;
-	character: CharacterData | null;
+	online: true;
+	character: TCharacter;
 }
+
+export interface OfflineAccountData {
+	account: string;
+	online: false;
+	character: null;
+}
+
+export type AccountData<TCharacter extends CharacterData = CharacterData> =
+	null extends TCharacter
+		? OnlineAccountData<TCharacter> | OfflineAccountData
+		: OnlineAccountData<TCharacter>;
 
 export interface CharacterData {
 	name: string;
@@ -24,9 +35,16 @@ export interface CharacterData {
 	gender: string;
 	level: number;
 	class: string;
-	map?: number;
-	x?: number;
-	y?: number;
+}
+
+export interface CharacterDataWithCoordinates extends CharacterData {
+	coordinates: Coordinates;
+}
+
+export interface Coordinates {
+	map: number;
+	x: number;
+	y: number;
 }
 
 // Database connection configuration
@@ -63,16 +81,16 @@ export const getAccounts = async (): Promise<AccountData[] | undefined> => {
 
 		return rows.map((row: any) => ({
 			account: row.username,
-			online: row.online,
-			character: row.online
-				? {
+			online: true,
+			character:
+				 {
 						name: row.name,
 						race: races[row.race - 1],
 						gender: row.gender === 0 ? 'Male' : 'Female',
 						level: row.level,
 						class: classes[row.class - 1]
 					}
-				: null
+
 		} satisfies AccountData));
 
 	} catch (err) {
@@ -83,42 +101,7 @@ export const getAccounts = async (): Promise<AccountData[] | undefined> => {
 	}
 };
 
-export const getCharacters = async (): Promise<AccountData[] | undefined> => {
-	let conn;
-	try {
-		conn = await pool.getConnection();
-
-		const rows = await conn.query(`
-			SELECT classicrealmd.account.username as account, name, race, position_x, position_y, map, level, online
-			FROM characters
-			JOIN classicrealmd.account ON characters.account = classicrealmd.account.id
-			WHERE classicrealmd.account.username NOT LIKE 'RNDBOT%'
-		`);
-
-		// Transform database rows to PlayerInfo objects
-		return rows.map((row: any) => ({
-			account: row.username,
-			online: row.online,
-			character: row.online
-				? {
-					name: row.name,
-					race: races[row.race - 1],
-					gender: row.gender === 0 ? 'Male' : 'Female',
-					level: row.level,
-					class: classes[row.class - 1],
-					x: row.position_x,
-					y: row.position_y
-				} : null
-		} satisfies AccountData));
-	} catch (err) {
-		console.error('Database error:', err);
-	} finally {
-		// Release connection back to the pool if it was obtained
-		if (conn) await conn.release();
-	}
-}
-
-export const getFromDb = async (): Promise<AccountData[] | undefined> => {
+export const getFromDb = async (): Promise<AccountData<CharacterDataWithCoordinates>[] | undefined> => {
 	let conn;
 	try {
 		conn = await pool.getConnection();
@@ -133,19 +116,20 @@ export const getFromDb = async (): Promise<AccountData[] | undefined> => {
 		// Transform database rows to PlayerInfo objects
 		return rows.map((row: any) => ({
 			account: row.account,
-			online: row.online,
-			character: row.online
-				? {
+			online: true,
+			character: {
 					name: row.name,
 					race: races[row.race - 1],
 					gender: row.gender === 0 ? 'Male' : 'Female',
 					level: row.level,
 					class: classes[row.class - 1],
-					map: row.map,
-					x: row.position_x,
-					y: row.position_y
-				} : null
-		} satisfies AccountData));
+					coordinates: {
+						map: row.map,
+						x: row.position_x,
+						y: row.position_y
+					}
+				}
+		} satisfies AccountData<CharacterDataWithCoordinates>));
 	} catch (err) {
 		console.error('Database error:', err);
 	} finally {

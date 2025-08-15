@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Map from '$lib/components/Map.svelte';
-	import type { AccountData } from '$lib';
+	import type { AccountData, CharacterDataWithCoordinates } from '$lib';
 	import { Checkbox, Heading, P } from 'flowbite-svelte';
 	import PlayerCard from '$lib/components/PlayerCard.svelte';
 
-	let { data }: { data: { players: AccountData[] } } = $props();
+	let { data }: { data: { players: AccountData<CharacterDataWithCoordinates>[] } } = $props();
 
 	let showBots = $state(false);
 	let activePlayerName: string | null = $state(null);
@@ -18,7 +18,7 @@
 		}
 	);
 
-	let setActivePlayer = (player: AccountData | null) => {
+	let setActivePlayer = (player: AccountData<CharacterDataWithCoordinates> | null) => {
 		activePlayerName = player?.character?.name ?? null;
 	}
 
