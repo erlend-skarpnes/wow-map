@@ -23,6 +23,18 @@
 			<br>
 			<code>.account password <i>old_password new_password new_password</i></code>
 		</P>
+
+		<Heading class="mt-4 text-4xl">Rules</Heading>
+		<List class="space-y-1 text-gray-900 dark:text-white">
+			<Li>300% XP from quests</Li>
+			<Li>Higher droprate on world drops</Li>
+			<Li>No limit on professions</Li>
+			<Li>Mount at level 20</Li>
+			<Li>World is full of helpful bots</Li>
+			<Li>50% more talent points</Li>
+			<Li>200% reputation gain</Li>
+			<Li>Supercharged rested xp gain when online in rested areas</Li>
+		</List>
 	</div>
 
 	<div class="flex flex-col gap-4 p-4 min-w-82">
