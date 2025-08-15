@@ -47,8 +47,6 @@
         const origoX = samplePoints[0].px_x + (samplePoints[0].db_y * scaleX);
         const origoY = samplePoints[0].px_y + (samplePoints[0].db_x * scaleX);
 
-        console.log({dPX, dDbX, dPY, dDbY, scaleX, scaleY, origoX, origoY})
-
         return {scaleX, scaleY, origoX, origoY};
     };
 
