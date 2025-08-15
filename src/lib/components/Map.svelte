@@ -5,8 +5,6 @@
     // Accept players data as a prop
     let { players, activePlayer }: {players: AccountData<CharacterDataWithCoordinates>[], activePlayer: string | null} = $props();
 
-    $inspect(activePlayer);
-
     type MapPoint = {db_x: number, db_y: number, px_x: number, px_y: number, character: CharacterData};
     type SampleMapPoint = Omit<MapPoint, 'character'>;
 
