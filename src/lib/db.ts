@@ -24,7 +24,7 @@ export interface OfflineAccountData {
 	character: null;
 }
 
-export type AccountData<TCharacter extends CharacterData = CharacterData> =
+export type AccountData<TCharacter extends CharacterData | null = CharacterData> =
 	null extends TCharacter
 		? OnlineAccountData<TCharacter> | OfflineAccountData
 		: OnlineAccountData<TCharacter>;
@@ -64,7 +64,7 @@ const pool = mariadb.createPool(dbConfig);
 const races = ["Human", "Orc", "Dwarf", "Night Elf", "Undead", "Tauren", "Gnome", "Troll"];
 const classes = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "DeathKnight", "Shaman", "Mage", "Warlock", "NotInUse?", "Druid"];
 
-export const getAccounts = async (): Promise<AccountData[] | undefined> => {
+export const getAccounts = async (): Promise<AccountData<CharacterData | null>[] | undefined> => {
 	let conn;
 	try {
 		conn = await pool.getConnection();
@@ -81,17 +81,16 @@ export const getAccounts = async (): Promise<AccountData[] | undefined> => {
 
 		return rows.map((row: any) => ({
 			account: row.username,
-			online: true,
-			character:
+			online: row.online,
+			character: row.online ?
 				 {
 						name: row.name,
 						race: races[row.race - 1],
 						gender: row.gender === 0 ? 'Male' : 'Female',
 						level: row.level,
 						class: classes[row.class - 1]
-					}
-
-		} satisfies AccountData));
+					} : null
+		} satisfies AccountData<CharacterData | null>));
 
 	} catch (err) {
 		console.error('Database error:', err);
