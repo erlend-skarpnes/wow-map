@@ -25,7 +25,7 @@
 
 </script>
 
-<div class="flex h-screen w-full overflow-hidden">
+<div class="flex flex-col lg:flex-row h-screen w-full overflow-hidden">
 	<!-- Sidebar -->
 	<div class="w-64 overflow-y-auto">
 		<div class="p-4">
@@ -35,7 +35,7 @@
 				<Checkbox bind:checked={showBots}>Show bots</Checkbox>
 			</div>
 		</div>
-		<div class="p-4">
+		<div class="p-4 max-h-32 lg:max-h-full">
 			{#each players ?? [] as player}
 				<div onmouseenter={() => setActivePlayer(player)} onmouseleave={() => setActivePlayer(null)} role="listitem">
 					<PlayerCard player={player} />

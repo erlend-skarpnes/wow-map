@@ -9,7 +9,7 @@
 
 </script>
 
-<div class="flex flex-row justify-center gap-16 p-8">
+<div class="flex flex-col md:flex-row justify-center gap-16 p-8">
 	<div class="justify-around gap-4 p-4 max-w-2xl">
 		<Heading tag="h1" class="mb-4">Welcome to World of Noobs</Heading>
 

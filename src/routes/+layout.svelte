@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/state';
-	import { DarkMode, Navbar, NavBrand, NavUl, NavLi, ThemeProvider, type ThemeConfig, Heading } from 'flowbite-svelte';
+	import { DarkMode, Navbar, NavBrand, NavHamburger, NavUl, NavLi, ThemeProvider, type ThemeConfig, Heading } from 'flowbite-svelte';
 
 	let { children } = $props();
 	let activeUrl = $derived(page.url.pathname);
@@ -35,6 +35,7 @@
 				<NavBrand href="/">
 					<Heading class="text-2xl">World of Noobs</Heading>
 				</NavBrand>
+				<NavHamburger />
 				<NavUl {activeUrl}>
 					{#each navItems as item}
 						<NavLi href={item.href}>{item.label}</NavLi>
