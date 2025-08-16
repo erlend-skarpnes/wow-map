@@ -106,7 +106,7 @@ export const getFromDb = async (): Promise<AccountData<CharacterDataWithCoordina
 		conn = await pool.getConnection();
 
 		const rows = await conn.query(`
-			SELECT classicrealmd.account.username as account, online, name, race, class, position_x, position_y, map, level
+			SELECT classicrealmd.account.username as account, online, name, race, gender, class, position_x, position_y, map, level
 			FROM characters 
 			JOIN classicrealmd.account ON characters.account = classicrealmd.account.id
 			WHERE online = 1
