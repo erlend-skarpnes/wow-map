@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { P, Avatar, Card } from 'flowbite-svelte';
-	import type { AccountData, CharacterData } from '$lib';
+	import type { AccountData, CharacterData } from '$lib/server';
 
 	let { player }: { player: AccountData} = $props();
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { AccountData } from '$lib';
+	import type { AccountData } from '$lib/server';
 	import { Card, Heading, P } from 'flowbite-svelte';
 	import PlayerCard from '$lib/components/PlayerCard.svelte';
 

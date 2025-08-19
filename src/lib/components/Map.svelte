@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { AccountData, CharacterData, CharacterDataWithCoordinates } from '$lib/db';
+    import type { AccountData, CharacterData, CharacterDataWithCoordinates } from '$lib/server';
     import { Avatar, P, Tooltip } from "flowbite-svelte";
 
     // Accept players data as a prop
