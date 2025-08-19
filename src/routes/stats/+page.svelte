@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { P, Card, Heading } from 'flowbite-svelte';
-	import { type CharacterStatsData, formatDuration, formatMoney } from '$lib';
+	import { formatDuration, formatMoney } from '$lib';
+	import type { CharacterStatsData } from '$lib/server';
 
 	const { data }: {data: {stats: CharacterStatsData }} = $props();
 
 </script>
 
-<div class="flex flex-row justify-center gap-16 p-8">
+<div class="flex flex-col sm:flex-row justify-center gap-16 p-8">
 	<Card class="p-4">
 		<Heading class="text-2xl">Highest level</Heading>
 			{#each data.stats.level as line}

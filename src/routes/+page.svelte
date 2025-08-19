@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ServerStatus from '$lib/components/ServerStatus.svelte';
-	import type { AccountData, ServerStatusData } from '$lib';
+	import type { AccountData, ServerStatusData } from '$lib/server';
 	import PlayerInfo from '$lib/components/PlayerInfo.svelte';
 	import { Card, Heading, P, A, List, Li } from 'flowbite-svelte';
 	import { PUBLIC_DOWNLOAD_LINK } from '$env/static/public';

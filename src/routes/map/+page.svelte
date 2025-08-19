@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Map from '$lib/components/Map.svelte';
-	import type { AccountData, CharacterDataWithCoordinates } from '$lib';
+	import type { AccountData, CharacterDataWithCoordinates } from '$lib/server';
 	import { Checkbox, Heading, P } from 'flowbite-svelte';
 	import PlayerCard from '$lib/components/PlayerCard.svelte';
 
