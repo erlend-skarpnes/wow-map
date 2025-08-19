@@ -9,7 +9,7 @@
 
 </script>
 
-<Card class="p-4 overflow-scroll">
+<Card class="p-4 overflow-y-auto">
 	<Heading class="mx-4 mb-2 text-2xl font-bold tracking-tight">Players</Heading>
 		{#if onlinePlayers.length === 0}
 			<P class="mx-4">No players online</P>
