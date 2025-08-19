@@ -1,29 +1,11 @@
 <script lang="ts">
 	import { Card, Heading, P } from 'flowbite-svelte';
-	import type { ServerStatusData } from '$lib';
+	import type { ServerStatusData } from '$lib/server';
+	import { formatDuration } from '$lib';
+
 	let { serverStatus }: { serverStatus: ServerStatusData }  = $props();
 
-	const formatDuration = (durationInSeconds: number) => {
-		const units = [
-			{ label: "day", seconds: 86400 },
-			{ label: "hour", seconds: 3600 },
-			{ label: "minute", seconds: 60 },
-			{ label: "second", seconds: 1 }
-		];
-
-		const parts = [];
-
-		for (const unit of units) {
-			const value = Math.floor(durationInSeconds / unit.seconds);
-			if (value > 0) {
-				parts.push(`${value} ${unit.label}${value > 1 ? "s" : ""}`);
-			}
-			durationInSeconds %= unit.seconds;
-		}
-
-		return parts.length > 0 ? parts.slice(0, 2).join(", ") : "0 seconds";
-	};
-</script>
+	</script>
 
 <Card class="p-4 sm:p-6 md:p-8">
 	<Heading class="mb-2 text-2xl font-bold tracking-tight">Server status</Heading>
