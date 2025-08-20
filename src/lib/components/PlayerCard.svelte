@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { P, Avatar, Card } from 'flowbite-svelte';
 	import type { AccountData, CharacterData } from '$lib/server';
+	import { capitalizeFirst } from '$lib';
 
 	let { player }: { player: AccountData} = $props();
 
@@ -19,7 +20,7 @@
 	<div class="flex-row flex gap-2 w-full justify-between">
 		<div>
 			<P class="font-medium">{player.character?.name}</P>
-			<P class="font-extralight">{player.account}</P>
+			<P class="font-extralight">{capitalizeFirst(player.account)}</P>
 		</div>
 		<div class="flex flex-row gap-1 justify-end items-center">
 			<Avatar src={getPortrait(player.character)} />

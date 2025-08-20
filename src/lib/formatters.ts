@@ -31,3 +31,5 @@ export const formatMoney = (amount: number) => {
 
 	return parts.join(' ');
 };
+export const capitalizeFirst = (str: string) =>
+	str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
