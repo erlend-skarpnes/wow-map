@@ -11,7 +11,7 @@
 	</script>
 
 <Card class="p-4 overflow-y-auto">
-	<Heading class="mx-4 mb-2 text-2xl font-bold tracking-tight">Players</Heading>
+	<Heading class="mx-4 mb-2 text-2xl font-bold tracking-tight">Online</Heading>
 		{#if onlinePlayers.length === 0}
 			<P class="mx-4">No players online</P>
 		{:else}
@@ -19,13 +19,4 @@
 			<PlayerCard player={player} />
 		{/each}
 	{/if}
-
-	<div class="mx-4 mt-4">
-		<Heading class="text-lg">Offline</Heading>
-		{#each offlinePlayers as player}
-			<div class="text-sm pt-1">
-				<P class="font-medium">{capitalizeFirst(player.account)}</P>
-			</div>
-		{/each}
-	</div>
 </Card>
