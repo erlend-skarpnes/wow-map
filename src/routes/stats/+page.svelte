@@ -10,7 +10,7 @@
 <div class="container mx-auto px-4 py-8">
 	<Heading tag="h1" class="text-4xl text-center mb-8">Character Leaderboards</Heading>
 
-	<div class="grid gap-6 justify-center" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
+	<div class="grid gap-6 justify-center" style="grid-template-columns: repeat(auto-fit, minmax(350px, 350px));">
 		<Card class="p-4">
 			<Heading class="text-2xl text-center mb-4 border-b pb-2">Highest Level</Heading>
 			<div class="space-y-2">
