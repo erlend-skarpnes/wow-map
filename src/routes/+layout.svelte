@@ -14,7 +14,8 @@
 	const navItems = [
 		{ href: '/', label: 'Home' },
 		{ href: '/map', label: 'World Map' },
-		{ href: '/stats', label: 'Stats' }
+		{ href: '/stats', label: 'Stats' },
+		{ href: '/players', label: 'Players' }
 	];
 	</script>
 	

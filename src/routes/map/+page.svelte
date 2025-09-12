@@ -38,7 +38,7 @@
 		<div class="p-4 max-h-32 lg:max-h-full">
 			{#each players ?? [] as player}
 				<div onmouseenter={() => setActivePlayer(player)} onmouseleave={() => setActivePlayer(null)} role="listitem">
-					<PlayerCard player={player} />
+					<PlayerCard character={player.character} accountName={player.account} />
 				</div>
 
 			{:else}

@@ -16,7 +16,7 @@
 			<P class="mx-4">No players online</P>
 		{:else}
 		{#each onlinePlayers as player}
-			<PlayerCard player={player} />
+			<PlayerCard character={player.character} accountName={player.account} />
 		{/each}
 	{/if}
 </Card>

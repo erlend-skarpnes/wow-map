@@ -37,6 +37,12 @@ export type AccountData<TCharacter extends CharacterData | null = CharacterData>
 		? OnlineAccountData<TCharacter> | OfflineAccountData
 		: OnlineAccountData<TCharacter>;
 
+export interface AccountOverviewData {
+	account: string;
+	online: boolean;
+	characters: CharacterData[];
+}
+
 export interface CharacterData {
 	name: string;
 	race: string;
@@ -185,7 +191,7 @@ export const getStats = async (): Promise<CharacterStatsData | undefined> => {
 	}
 };
 
-export const getAccounts = async (): Promise<AccountData<CharacterData | null>[] | undefined> => {
+export const getOnlineAccounts = async (): Promise<AccountData<CharacterData | null>[] | undefined> => {
 	let conn;
 	try {
 		conn = await pool.getConnection();
@@ -217,6 +223,53 @@ export const getAccounts = async (): Promise<AccountData<CharacterData | null>[]
 						: null
 				}) satisfies AccountData<CharacterData | null>
 		);
+	} catch (err) {
+		console.error('Database error:', err);
+	} finally {
+		// Release connection back to the pool if it was obtained
+		if (conn) await conn.release();
+	}
+};
+
+export const getAccounts = async (): Promise<Record<string, AccountOverviewData> | undefined> => {
+	let conn;
+	try {
+		conn = await pool.getConnection();
+
+		const rows = await conn.query(`
+			SELECT a.username, c.name, c.level, c.race, c.gender, c.class, c.online
+			FROM classicrealmd.account a
+						 INNER JOIN (SELECT account, name, level, race, gender, class, online
+												FROM classiccharacters.characters) c
+											 ON a.id = c.account
+			WHERE a.username NOT LIKE 'RNDBOT%'
+				AND a.username NOT LIKE 'GM';
+		`);
+
+		return rows.reduce((acc: any, row: any) => {
+			if (!acc[row.username]) {
+				acc[row.username] = {
+					account: row.username,
+					online: row.online,
+					characters: [{
+						name: row.name,
+						race: races[row.race - 1],
+						gender: row.gender === 0 ? 'Male' : 'Female',
+						level: row.level,
+						class: classes[row.class - 1]
+					} satisfies CharacterData]
+				} satisfies AccountOverviewData;
+			} else {
+				acc[row.username].characters.push({
+					name: row.name,
+					race: races[row.race - 1],
+					gender: row.gender === 0 ? 'Male' : 'Female',
+					level: row.level,
+					class: classes[row.class - 1]
+				} satisfies CharacterData)
+			}
+			return acc;
+		}, {})
 	} catch (err) {
 		console.error('Database error:', err);
 	} finally {

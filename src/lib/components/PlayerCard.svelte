@@ -3,7 +3,7 @@
 	import type { AccountData, CharacterData } from '$lib/server';
 	import { capitalizeFirst } from '$lib';
 
-	let { player }: { player: AccountData} = $props();
+	let { character, accountName }: { character: CharacterData, accountName?: string} = $props();
 
 	const getPortrait = (character: CharacterData | null): string | undefined => {
 		if (character == null) return undefined;
@@ -19,12 +19,13 @@
 <Card class={"my-1 p-1 px-4 hover:bg-gray-400"}>
 	<div class="flex-row flex gap-2 w-full justify-between">
 		<div>
-			<P class="font-medium">{player.character?.name}</P>
-			<P class="font-extralight">{capitalizeFirst(player.account)}</P>
+			<P class="font-medium">{character?.name}</P>
+			<P class="font-extralight">Lvl {character?.level}</P>
+			<P class="font-extralight">{capitalizeFirst(accountName ?? "")}</P>
 		</div>
 		<div class="flex flex-row gap-1 justify-end items-center">
-			<Avatar src={getPortrait(player.character)} />
-			<Avatar src={getClassPicture(player.character)} />
+			<Avatar src={getPortrait(character)} />
+			<Avatar src={getClassPicture(character)} />
 		</div>
 	</div>
 </Card>
