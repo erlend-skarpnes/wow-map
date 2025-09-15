@@ -1,25 +1,28 @@
 <script lang="ts">
 	import Map from '$lib/components/Map.svelte';
-	import type { AccountData, CharacterDataWithCoordinates } from '$lib/server';
+	import type { AccountData, AccountOverviewData, CharacterDataWithCoordinates } from '$lib/server';
 	import { Checkbox, Heading, P } from 'flowbite-svelte';
 	import PlayerCard from '$lib/components/PlayerCard.svelte';
 
-	let { data }: { data: { players: AccountData<CharacterDataWithCoordinates>[] } } = $props();
+	let { data }: { data: { players: AccountOverviewData<CharacterDataWithCoordinates>[] } } = $props();
 
-	let showBots = $state(false);
+	let showOffline = $state(false);
 	let activePlayerName: string | null = $state(null);
 
 
 	let players = $derived.by(() => {
-			if (showBots === false) {
-				return data.players.filter(player => player.account.startsWith("RNDBOT") === false);
+
+			let allPlayers = data.players.flatMap(player => player.characters);
+
+			if (showOffline === false) {
+				return allPlayers.filter(player => player.online === true);
 			}
-			return data.players;
+			return allPlayers;
 		}
 	);
 
-	let setActivePlayer = (player: AccountData<CharacterDataWithCoordinates> | null) => {
-		activePlayerName = player?.character?.name ?? null;
+	let setActivePlayer = (player: CharacterDataWithCoordinates | null) => {
+		activePlayerName = player?.name ?? null;
 	}
 
 
@@ -31,14 +34,18 @@
 		<div class="p-4">
 			<Heading class="text-xl">Players Online</Heading>
 			<div class="flex justify-between items-center">
-				<P>{players.length} online</P>
-				<Checkbox bind:checked={showBots}>Show bots</Checkbox>
+				{#if showOffline}
+					<P>{players.length} total</P>
+				{:else}
+					<P>{players.length} online</P>
+				{/if}
+				<Checkbox bind:checked={showOffline}>Show offline</Checkbox>
 			</div>
 		</div>
 		<div class="p-4 max-h-32 lg:max-h-full">
 			{#each players ?? [] as player}
 				<div onmouseenter={() => setActivePlayer(player)} onmouseleave={() => setActivePlayer(null)} role="listitem">
-					<PlayerCard character={player.character} accountName={player.account} />
+					<PlayerCard character={player} />
 				</div>
 
 			{:else}
@@ -50,7 +57,7 @@
 	<!-- Map Area -->
 	<div class="flex-1">
 		<div class="h-full">
-			<Map players={players ?? []} activePlayer={activePlayerName}/>
+			<Map players={players ?? []} activePlayer={activePlayerName} />
 		</div>
 	</div>
 </div>

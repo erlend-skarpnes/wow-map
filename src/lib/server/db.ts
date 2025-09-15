@@ -37,10 +37,10 @@ export type AccountData<TCharacter extends CharacterData | null = CharacterData>
 		? OnlineAccountData<TCharacter> | OfflineAccountData
 		: OnlineAccountData<TCharacter>;
 
-export interface AccountOverviewData {
+export interface AccountOverviewData<T extends CharacterData> {
 	account: string;
 	online: boolean;
-	characters: CharacterData[];
+	characters: T[];
 }
 
 export interface CharacterData {
@@ -49,6 +49,7 @@ export interface CharacterData {
 	gender: string;
 	level: number;
 	class: string;
+	online: boolean;
 }
 
 export interface CharacterDataWithCoordinates extends CharacterData {
@@ -218,7 +219,8 @@ export const getOnlineAccounts = async (): Promise<AccountData<CharacterData | n
 								race: races[row.race - 1],
 								gender: row.gender === 0 ? 'Male' : 'Female',
 								level: row.level,
-								class: classes[row.class - 1]
+								class: classes[row.class - 1],
+								online: row.online
 							}
 						: null
 				}) satisfies AccountData<CharacterData | null>
@@ -231,7 +233,7 @@ export const getOnlineAccounts = async (): Promise<AccountData<CharacterData | n
 	}
 };
 
-export const getAccounts = async (): Promise<Record<string, AccountOverviewData> | undefined> => {
+export const getAccounts = async (): Promise<Record<string, AccountOverviewData<CharacterData>> | undefined> => {
 	let conn;
 	try {
 		conn = await pool.getConnection();
@@ -256,16 +258,18 @@ export const getAccounts = async (): Promise<Record<string, AccountOverviewData>
 						race: races[row.race - 1],
 						gender: row.gender === 0 ? 'Male' : 'Female',
 						level: row.level,
-						class: classes[row.class - 1]
+						class: classes[row.class - 1],
+						online: row.online
 					} satisfies CharacterData]
-				} satisfies AccountOverviewData;
+				} satisfies AccountOverviewData<CharacterData>;
 			} else {
 				acc[row.username].characters.push({
 					name: row.name,
 					race: races[row.race - 1],
 					gender: row.gender === 0 ? 'Male' : 'Female',
 					level: row.level,
-					class: classes[row.class - 1]
+					class: classes[row.class - 1],
+					online: row.online
 				} satisfies CharacterData)
 			}
 			return acc;
@@ -279,7 +283,7 @@ export const getAccounts = async (): Promise<Record<string, AccountOverviewData>
 };
 
 export const getFromDb = async (): Promise<
-	AccountData<CharacterDataWithCoordinates>[] | undefined
+	AccountOverviewData<CharacterDataWithCoordinates>[] | undefined
 > => {
 	let conn;
 	try {
@@ -298,29 +302,49 @@ export const getFromDb = async (): Promise<
 						 level
 			FROM characters
 						 JOIN classicrealmd.account ON characters.account = classicrealmd.account.id
-			WHERE online = 1
+			WHERE classicrealmd.account.username NOT LIKE 'RNDBOT%'
+				AND classicrealmd.account.username NOT LIKE 'GM';
 		`);
 
 		// Transform database rows to PlayerInfo objects
-		return rows.map(
-			(row: any) =>
-				({
-					account: row.account,
-					online: true,
-					character: {
+		let accumulator = rows.reduce((acc: any, row: any) => {
+			if (!acc[row.username]) {
+				acc[row.username] = {
+					account: row.username,
+					online: row.online,
+					characters: [{
 						name: row.name,
 						race: races[row.race - 1],
 						gender: row.gender === 0 ? 'Male' : 'Female',
 						level: row.level,
 						class: classes[row.class - 1],
+						online: row.online,
 						coordinates: {
 							map: row.map,
 							x: row.position_x,
 							y: row.position_y
 						}
+					} satisfies CharacterDataWithCoordinates]
+				} satisfies AccountOverviewData<CharacterDataWithCoordinates>;
+			} else {
+				acc[row.username].characters.push({
+					name: row.name,
+					race: races[row.race - 1],
+					gender: row.gender === 0 ? 'Male' : 'Female',
+					level: row.level,
+					class: classes[row.class - 1],
+					online: row.online,
+					coordinates: {
+						map: row.map,
+						x: row.position_x,
+						y: row.position_y
 					}
-				}) satisfies AccountData<CharacterDataWithCoordinates>
-		);
+				} satisfies CharacterDataWithCoordinates)
+			}
+			return acc;
+		}, {});
+		return Object.values(accumulator);
+
 	} catch (err) {
 		console.error('Database error:', err);
 	} finally {

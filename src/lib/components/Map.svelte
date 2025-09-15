@@ -1,9 +1,9 @@
 <script lang="ts">
-    import type { AccountData, CharacterData, CharacterDataWithCoordinates } from '$lib/server';
+    import type { CharacterData, CharacterDataWithCoordinates } from '$lib/server';
     import { Avatar, P, Tooltip } from "flowbite-svelte";
 
     // Accept players data as a prop
-    let { players, activePlayer }: {players: AccountData<CharacterDataWithCoordinates>[], activePlayer: string | null} = $props();
+    let { players, activePlayer }: {players: CharacterDataWithCoordinates[], activePlayer: string | null} = $props();
 
     type MapPoint = {db_x: number, db_y: number, px_x: number, px_y: number, character: CharacterData};
     type SampleMapPoint = Omit<MapPoint, 'character'>;
@@ -64,21 +64,28 @@
         return {db_x: player.coordinates.x, db_y: player.coordinates.y, px_x, px_y, character: player};
     };
 
-    const playerCoordinates = $derived(players.map(player => mapToPixels(player.character)).filter(p => p !== undefined));
+    const playerCoordinates = $derived(players.map(player => mapToPixels(player)).filter(p => p !== undefined));
 </script>
 
-<div class="h-full w-full relative flex justify-center items-center" bind:clientWidth={containerWidth} bind:clientHeight={containerHeight}>
-    <img src="wow-map.png" alt="World Map" class="object-contain max-w-full max-h-full" bind:clientHeight={mapHeight} bind:clientWidth={mapWidth} />
+<div class="h-full w-full relative flex justify-center items-center" bind:clientWidth={containerWidth}
+		 bind:clientHeight={containerHeight}>
+	<img src="wow-map.png" alt="World Map" class="object-contain max-w-full max-h-full" bind:clientHeight={mapHeight}
+			 bind:clientWidth={mapWidth} />
 
-    {#each playerCoordinates as player}
-        <div style="left: {offsetX + (player.px_x * scale)}px; top: {offsetY + (player).px_y * scale}px;"
-             class="z-10 absolute">
-            {#if player.character?.name === activePlayer}
-                <Avatar size="md" src={getPortrait(player.character)} class="transition-all transform -translate-x-1/2 -translate-y-1/2 z-50 border-2 dark:border-amber-500"/>
-            {:else}
-                <Avatar size="xs" src={getPortrait(player.character)} class="transition-all transform -translate-x-1/2 -translate-y-1/2 hover:h-8 hover:w-8"/>
-                <Tooltip><P>{player.character?.name}</P></Tooltip>
-            {/if}
-        </div>
-    {/each}
+	{#each playerCoordinates as player}
+		<div style="left: {offsetX + (player.px_x * scale)}px; top: {offsetY + (player).px_y * scale}px;"
+				 class={["z-10 absolute hover:z-20", {"z-20": player.character?.name === activePlayer}]}>
+			<Avatar
+				size={player.character?.name === activePlayer ? "md" : "xs"}
+				src={getPortrait(player.character)}
+				class={[
+										"transition-all transform -translate-x-1/2 -translate-y-1/2 hover:h-8 hover:w-8",
+										{
+											'opacity-50': !player.character?.online,
+											'border-2 dark:border-amber-500 opacity-100':  player.character?.name === activePlayer }
+											]}
+			/>
+			<Tooltip><P>{player.character?.name}</P></Tooltip>
+		</div>
+	{/each}
 </div>
