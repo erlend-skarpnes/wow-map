@@ -64,7 +64,7 @@
         return {db_x: player.coordinates.x, db_y: player.coordinates.y, px_x, px_y, character: player};
     };
 
-    const playerCoordinates = $derived(players.map(player => mapToPixels(player)).filter(p => p !== undefined));
+    const playerCoordinates = $derived(players.map(player => mapToPixels(player)).filter(p => p !== undefined).reverse());
 </script>
 
 <div class="h-full w-full relative flex justify-center items-center" bind:clientWidth={containerWidth}
