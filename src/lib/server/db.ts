@@ -75,6 +75,15 @@ export interface CharacterStat {
 	value: number;
 }
 
+export interface AuctionData {
+	itemName: string;
+	buyoutPrice: number;
+	startBid: number;
+	lastBid: number;
+	sellerCharacter: string;
+	sellerAccount: string;
+}
+
 // Database connection configuration
 const dbConfig = {
 	host: DB_HOST || 'localhost',
@@ -352,6 +361,39 @@ export const getFromDb = async (): Promise<
 		if (conn) await conn.release();
 	}
 };
+
+export const getAuctions = async () => {
+	let conn;
+	try {
+		conn = await pool.getConnection();
+
+		const rows = await conn.query(`
+			SELECT i.name as item_name, a.buyoutprice, a.startbid, a.lastbid, c.name, acc.username
+			FROM classiccharacters.auction a
+						 INNER JOIN classicmangos.item_template i ON a.item_template = i.entry
+						 INNER JOIN classiccharacters.characters c ON a.itemowner = c.guid
+						 INNER JOIN classicrealmd.account acc ON c.account = acc.id
+			WHERE acc.username NOT LIKE 'RNDBOT%'
+				AND acc.username NOT LIKE 'GM';
+		`);
+
+		return rows.map(
+			(row: any) =>
+				({
+					itemName: row.item_name,
+					buyoutPrice: row.buyoutprice,
+					startBid: row.startbid,
+					lastBid: row.lastbid,
+					sellerCharacter: row.name,
+					sellerAccount: row.username
+				}) satisfies AuctionData)
+	} catch (err) {
+		console.error('Database error:', err);
+	} finally {
+		// Release connection back to the pool if it was obtained
+		if (conn) await conn.release();
+	}
+}
 
 export const getServerUp = async (): Promise<boolean> => {
 	return new Promise((resolve) => {

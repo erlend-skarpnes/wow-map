@@ -21,6 +21,7 @@
 		"flowbite": "^3.1.2",
 		"flowbite-svelte": "^1.11.2",
 		"flowbite-svelte-icons": "^2.2.1",
+        "@flowbite-svelte-plugins/datatable": "^0.4.0",
 		"mariadb": "^3.4.2",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",

@@ -15,7 +15,8 @@
 		{ href: '/', label: 'Home' },
 		{ href: '/map', label: 'World Map' },
 		{ href: '/stats', label: 'Stats' },
-		{ href: '/players', label: 'Players' }
+		{ href: '/players', label: 'Players' },
+		{ href: '/auctions', label: 'Auctions' }
 	];
 	</script>
 	
