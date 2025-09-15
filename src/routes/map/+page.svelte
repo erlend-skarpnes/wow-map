@@ -12,12 +12,12 @@
 
 	let players = $derived.by(() => {
 
-			let allPlayers = data.players.flatMap(player => player.characters);
+			let allPlayers = data.players.flatMap(player => player.characters).filter(player => player.level > 1) as CharacterDataWithCoordinates[];
 
 			if (showOffline === false) {
 				return allPlayers.filter(player => player.online === true);
 			}
-			return allPlayers;
+			return allPlayers.sort((a, b) => b.level - a.level);
 		}
 	);
 
