@@ -327,7 +327,7 @@ export const getFromDb = async (): Promise<
 						gender: row.gender === 0 ? 'Male' : 'Female',
 						level: row.level,
 						class: classes[row.class - 1],
-						online: row.online,
+						online: row.online === 1,
 						coordinates: {
 							map: row.map,
 							x: row.position_x,
@@ -342,7 +342,7 @@ export const getFromDb = async (): Promise<
 					gender: row.gender === 0 ? 'Male' : 'Female',
 					level: row.level,
 					class: classes[row.class - 1],
-					online: row.online,
+					online: row.online === 1,
 					coordinates: {
 						map: row.map,
 						x: row.position_x,
