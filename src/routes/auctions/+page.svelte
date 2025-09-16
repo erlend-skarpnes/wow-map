@@ -11,6 +11,7 @@
 	let tableData = $derived(
 		data.auctions.map((auction) => ({
 			"Item": auction.itemName,
+			"Quantity": auction.quantity,
 			"Buyout": auction.buyoutPrice,
 			"Starting bid": auction.startBid,
 			"Last bid": auction.lastBid,
@@ -22,7 +23,7 @@
 	const dataTableOptions: DataTableOptions = {
 		columns: [
 			{
-				select: [1, 2, 3], // Buyout, Starting bid, Last bid
+				select: [2, 3, 4], // Buyout, Starting bid, Last bid
 				type: 'number',
 				numeric: true,
 				render: (cellData) => {

@@ -77,6 +77,7 @@ export interface CharacterStat {
 
 export interface AuctionData {
 	itemName: string;
+	quantity: number;
 	buyoutPrice: number;
 	startBid: number;
 	lastBid: number;
@@ -368,7 +369,7 @@ export const getAuctions = async () => {
 		conn = await pool.getConnection();
 
 		const rows = await conn.query(`
-			SELECT i.name as item_name, a.buyoutprice, a.startbid, a.lastbid, c.name, acc.username
+			SELECT i.name as item_name, a.item_count, a.buyoutprice, a.startbid, a.lastbid, c.name, acc.username
 			FROM classiccharacters.auction a
 						 INNER JOIN classicmangos.item_template i ON a.item_template = i.entry
 						 INNER JOIN classiccharacters.characters c ON a.itemowner = c.guid
@@ -381,6 +382,7 @@ export const getAuctions = async () => {
 			(row: any) =>
 				({
 					itemName: row.item_name,
+					quantity: row.item_count,
 					buyoutPrice: row.buyoutprice,
 					startBid: row.startbid,
 					lastBid: row.lastbid,
