@@ -10,15 +10,6 @@ import {
 } from '$env/static/private';
 import net from 'node:net';
 
-export interface PlayerData {
-	account: string;
-	name: string;
-	race: string;
-	map: number;
-	level: number;
-	x: number;
-	y: number;
-}
 
 export interface OnlineAccountData<TCharacter> {
 	account: string;
@@ -243,7 +234,7 @@ export const getOnlineAccounts = async (): Promise<AccountData<CharacterData | n
 	}
 };
 
-export const getAccounts = async (): Promise<Record<string, AccountOverviewData<CharacterData>> | undefined> => {
+export const getAccounts = async (): Promise<AccountOverviewData<CharacterData>[] | undefined> => {
 	let conn;
 	try {
 		conn = await pool.getConnection();
@@ -258,7 +249,7 @@ export const getAccounts = async (): Promise<Record<string, AccountOverviewData<
 				AND a.username NOT LIKE 'GM';
 		`);
 
-		return rows.reduce((acc: any, row: any) => {
+		const accumulator = rows.reduce((acc: any, row: any) => {
 			if (!acc[row.username]) {
 				acc[row.username] = {
 					account: row.username,
@@ -283,7 +274,8 @@ export const getAccounts = async (): Promise<Record<string, AccountOverviewData<
 				} satisfies CharacterData)
 			}
 			return acc;
-		}, {})
+		}, {});
+		return Object.values(accumulator);
 	} catch (err) {
 		console.error('Database error:', err);
 	} finally {
