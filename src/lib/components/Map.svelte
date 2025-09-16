@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { CharacterData, CharacterDataWithCoordinates } from '$lib/server';
     import { Avatar, P, Tooltip } from "flowbite-svelte";
+		import PlayerIcon from '$lib/components/PlayerIcon.svelte';
 
     // Accept players data as a prop
     let { players, activePlayer }: {players: CharacterDataWithCoordinates[], activePlayer: string | null} = $props();
@@ -75,7 +76,7 @@
 	{#each playerCoordinates as player}
 		<div style="left: {offsetX + (player.px_x * scale)}px; top: {offsetY + (player).px_y * scale}px;"
 				 class={["z-10 absolute hover:z-20", {"z-20": player.character?.name === activePlayer}]}>
-			<Avatar
+<!--			<Avatar
 				size={player.character?.name === activePlayer ? "md" : "xs"}
 				src={getPortrait(player.character)}
 				class={[
@@ -84,7 +85,16 @@
 											'opacity-50': !player.character?.online,
 											'border-2 dark:border-amber-500 opacity-100':  player.character?.name === activePlayer }
 											]}
-			/>
+			/>-->
+			<PlayerIcon
+				character={player.character}
+				size={player.character?.name === activePlayer ? "md" : "xs"}
+				class={[
+										"transition-all transform -translate-x-1/2 -translate-y-1/2 hover:h-8 hover:w-8",
+										{
+											'opacity-50': !player.character?.online,
+											'border-2 dark:border-amber-500 opacity-100':  player.character?.name === activePlayer }
+											]}/>
 			<Tooltip><P>{player.character?.name}</P></Tooltip>
 		</div>
 	{/each}
