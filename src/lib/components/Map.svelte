@@ -20,11 +20,6 @@
     let offsetX = $derived((containerWidth - mapWidth)/2);
     let offsetY = $derived((containerHeight - mapHeight)/2);
 
-    const getPortrait = (character: CharacterData | null): string | undefined => {
-        if (character == null) return undefined;
-        return `/races/${character.race.replace(' ', '').toLowerCase()}-${character.gender.toLowerCase()}.jpg`;
-    };
-
     const samplePointsEK: SampleMapPoint[] = [
         { db_x: 2314.55004882812500000000, db_y: -5322.85986328125000000000, px_x: 2500, px_y: 417 }, // Dispatch Commander Metz
         { db_x: -11407.09960937500000000000, db_y: 1966.15002441406250000000, px_x: 1896, px_y: 1557 }, // Captain Grayson
@@ -76,16 +71,6 @@
 	{#each playerCoordinates as player}
 		<div style="left: {offsetX + (player.px_x * scale)}px; top: {offsetY + (player).px_y * scale}px;"
 				 class={["z-10 absolute hover:z-20", {"z-20": player.character?.name === activePlayer}]}>
-<!--			<Avatar
-				size={player.character?.name === activePlayer ? "md" : "xs"}
-				src={getPortrait(player.character)}
-				class={[
-										"transition-all transform -translate-x-1/2 -translate-y-1/2 hover:h-8 hover:w-8",
-										{
-											'opacity-50': !player.character?.online,
-											'border-2 dark:border-amber-500 opacity-100':  player.character?.name === activePlayer }
-											]}
-			/>-->
 			<PlayerIcon
 				character={player.character}
 				size={player.character?.name === activePlayer ? "md" : "xs"}
