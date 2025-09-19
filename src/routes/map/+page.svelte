@@ -17,7 +17,12 @@
 			if (showOffline === false) {
 				return allPlayers.filter(player => player.online === true);
 			}
-			return allPlayers.sort((a, b) => b.level - a.level);
+			return allPlayers.sort((a, b) => {
+				if (a.online === b.online) {
+					return b.lastOnline - a.lastOnline;
+				}
+				return a.online ? -1 : 1;
+			});
 		}
 	);
 
