@@ -1,4 +1,4 @@
-export const formatDuration = (durationInSeconds: number) => {
+export const formatDuration = (durationInSeconds: number, timeComponents: number = 2) => {
 	const units = [
 		{ label: 'day', seconds: 86400 },
 		{ label: 'hour', seconds: 3600 },
@@ -16,7 +16,7 @@ export const formatDuration = (durationInSeconds: number) => {
 		durationInSeconds %= unit.seconds;
 	}
 
-	return parts.length > 0 ? parts.slice(0, 2).join(', ') : '0 seconds';
+	return parts.length > 0 ? parts.slice(0, timeComponents).join(', ') : '0 seconds';
 };
 
 export const formatMoney = (amount: number) => {

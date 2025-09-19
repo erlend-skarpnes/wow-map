@@ -41,6 +41,7 @@ export interface CharacterData {
 	level: number;
 	class: string;
 	online: boolean;
+	lastOnline: number;
 }
 
 export interface CharacterDataWithCoordinates extends CharacterData {
@@ -199,9 +200,9 @@ export const getOnlineAccounts = async (): Promise<AccountData<CharacterData | n
 		conn = await pool.getConnection();
 
 		const rows = await conn.query(`
-			SELECT a.username, c.name, c.level, c.race, c.gender, c.class, c.online
+			SELECT a.username, c.name, c.level, c.race, c.gender, c.class, c.online, c.logout_time
 			FROM classicrealmd.account a
-						 LEFT JOIN (SELECT account, name, level, race, gender, class, online
+						 LEFT JOIN (SELECT account, name, level, race, gender, class, online, logout_time
 												FROM classiccharacters.characters
 												WHERE online = 1) c
 											 ON a.id = c.account
@@ -221,7 +222,8 @@ export const getOnlineAccounts = async (): Promise<AccountData<CharacterData | n
 								gender: row.gender === 0 ? 'Male' : 'Female',
 								level: row.level,
 								class: classes[row.class - 1],
-								online: row.online
+								online: row.online,
+								lastOnline: Number(row.logout_time)
 							}
 						: null
 				}) satisfies AccountData<CharacterData | null>
@@ -240,9 +242,9 @@ export const getAccounts = async (): Promise<AccountOverviewData<CharacterData>[
 		conn = await pool.getConnection();
 
 		const rows = await conn.query(`
-			SELECT a.username, c.name, c.level, c.race, c.gender, c.class, c.online
+			SELECT a.username, c.name, c.level, c.race, c.gender, c.class, c.online, c.logout_time
 			FROM classicrealmd.account a
-						 INNER JOIN (SELECT account, name, level, race, gender, class, online
+						 INNER JOIN (SELECT account, name, level, race, gender, class, online, logout_time
 												FROM classiccharacters.characters) c
 											 ON a.id = c.account
 			WHERE a.username NOT LIKE 'RNDBOT%'
@@ -260,7 +262,8 @@ export const getAccounts = async (): Promise<AccountOverviewData<CharacterData>[
 						gender: row.gender === 0 ? 'Male' : 'Female',
 						level: row.level,
 						class: classes[row.class - 1],
-						online: row.online
+						online: row.online,
+						lastOnline: Number(row.logout_time)
 					} satisfies CharacterData]
 				} satisfies AccountOverviewData<CharacterData>;
 			} else {
@@ -270,7 +273,8 @@ export const getAccounts = async (): Promise<AccountOverviewData<CharacterData>[
 					gender: row.gender === 0 ? 'Male' : 'Female',
 					level: row.level,
 					class: classes[row.class - 1],
-					online: row.online
+					online: row.online,
+					lastOnline: Number(row.logout_time)
 				} satisfies CharacterData)
 			}
 			return acc;
@@ -301,7 +305,8 @@ export const getFromDb = async (): Promise<
 						 position_x,
 						 position_y,
 						 map,
-						 level
+						 level,
+						 logout_time
 			FROM characters
 						 JOIN classicrealmd.account ON characters.account = classicrealmd.account.id
 			WHERE classicrealmd.account.username NOT LIKE 'RNDBOT%'
@@ -321,6 +326,7 @@ export const getFromDb = async (): Promise<
 						level: row.level,
 						class: classes[row.class - 1],
 						online: row.online === 1,
+						lastOnline: Number(row.logout_time),
 						coordinates: {
 							map: row.map,
 							x: row.position_x,
@@ -336,6 +342,7 @@ export const getFromDb = async (): Promise<
 					level: row.level,
 					class: classes[row.class - 1],
 					online: row.online === 1,
+					lastOnline: Number(row.logout_time),
 					coordinates: {
 						map: row.map,
 						x: row.position_x,
