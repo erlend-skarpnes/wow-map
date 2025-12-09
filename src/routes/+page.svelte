@@ -26,13 +26,14 @@
 
 		<Heading class="mt-4 text-4xl">Rules</Heading>
 		<List class="space-y-1 text-gray-900 dark:text-white">
-			<Li>300% XP from quests</Li>
+			<Li>500% XP from quests</Li>
+			<Li>200% XP from mobs</Li>
 			<Li>Higher droprate on world drops</Li>
 			<Li>No limit on professions</Li>
 			<Li>Mount at level 20</Li>
 			<Li>World is full of helpful bots</Li>
 			<Li>50% more talent points</Li>
-			<Li>200% reputation gain</Li>
+			<Li>1000% reputation gain</Li>
 			<Li>Supercharged rested xp gain when online in rested areas</Li>
 		</List>
 	</div>
