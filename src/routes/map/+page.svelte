@@ -34,7 +34,7 @@
 
 </script>
 
-<div class="flex flex-col lg:flex-row h-screen w-full overflow-hidden">
+<div class="flex flex-col lg:flex-row h-full w-full overflow-hidden">
 	<!-- Sidebar -->
 	<div class="w-64 overflow-y-auto">
 		<div class="p-4">
