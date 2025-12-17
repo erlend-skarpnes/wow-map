@@ -12,12 +12,11 @@
 
   const MAP_SIZE = 256*64;
   const TILE_SIZE = 256;
-  const MAX_ZOOM = 6;
 
   onMount(() => {
     deck = new Deck({
       parent: container,
-
+      style: {position: "static"},
       views: 
         new OrthographicView({
           id: 'ortho',
@@ -75,4 +74,4 @@
   });
 </script>
 
-<div bind:this={container} class="map"></div>
+<div bind:this={container} class="w-full h-full"></div>
