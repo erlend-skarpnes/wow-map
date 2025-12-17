@@ -28,7 +28,7 @@
         target: [MAP_SIZE/2, MAP_SIZE/2, 0],
         zoom: -4,
         maxZoom: 0,
-        minZoom: -6
+        minZoom: -4
       },
 
       layers: [
