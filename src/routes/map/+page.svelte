@@ -3,6 +3,7 @@
 	import type { AccountData, AccountOverviewData, CharacterDataWithCoordinates } from '$lib/server';
 	import { Checkbox, Heading, P } from 'flowbite-svelte';
 	import PlayerCard from '$lib/components/PlayerCard.svelte';
+	import DeckGLMap from '$lib/components/DeckGLMap.svelte';
 
 	let { data }: { data: { players: AccountOverviewData<CharacterDataWithCoordinates>[] } } = $props();
 
@@ -62,7 +63,8 @@
 	<!-- Map Area -->
 	<div class="flex-1">
 		<div class="h-full">
-			<Map players={players ?? []} activePlayer={activePlayerName} />
+			<DeckGLMap />
+			<!-- <Map players={players ?? []} activePlayer={activePlayerName} />  -->
 		</div>
 	</div>
 </div>
