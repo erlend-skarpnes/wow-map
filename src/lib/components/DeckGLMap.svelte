@@ -43,6 +43,7 @@
           tileSize: TILE_SIZE,
             pickable: true,
             autoHighlight: true,
+            highlightColor: [255, 255, 255, 50],
             
           coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
           getTileData: ({index}) => {
