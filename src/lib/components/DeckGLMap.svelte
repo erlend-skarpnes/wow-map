@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { COORDINATE_SYSTEM, Deck, OrthographicView } from '@deck.gl/core';
-	import { BitmapLayer, ScatterplotLayer } from '@deck.gl/layers';
+	import { BitmapLayer, IconLayer, ScatterplotLayer } from '@deck.gl/layers';
 	import { TileLayer } from '@deck.gl/geo-layers';
 	import { load } from '@loaders.gl/core';
 	import { clamp } from '@math.gl/core';
 	import type { CharacterDataWithCoordinates, Coordinates } from '$lib/server';
+	import type { IconMapping } from '@deck.gl/layers/dist/icon-layer/icon-manager';
 
 	let { players }: {players: CharacterDataWithCoordinates[]} = $props();
 
@@ -26,6 +27,25 @@
 
 	const MAP_SIZE = 256 * 64;
 	const TILE_SIZE = 256;
+
+	const spriteMapping: IconMapping = {
+		"human-male": { x: 0, y: 0, width: 56, height: 56 },
+		"human-female": { x: 56, y: 0, width: 56, height: 56 },
+		"orc-male": { x: 112, y: 0, width: 56, height: 56 },
+		"orc-female": { x: 168, y: 0, width: 56, height: 56 },
+		"dwarf-male": { x: 224, y: 0, width: 56, height: 56 },
+		"dwarf-female": { x: 280, y: 0, width: 56, height: 56 },
+		"nightelf-male": { x: 336, y: 0, width: 56, height: 56 },
+		"nightelf-female": { x: 392, y: 0, width: 56, height: 56 },
+		"undead-male": { x: 448, y: 0, width: 56, height: 56 },
+		"undead-female": { x: 504, y: 0, width: 56, height: 56 },
+		"tauren-male": { x: 560, y: 0, width: 56, height: 56 },
+		"tauren-female": { x: 616, y: 0, width: 56, height: 56 },
+		"gnome-male": { x: 672, y: 0, width: 56, height: 56 },
+		"gnome-female": { x: 728, y: 0, width: 56, height: 56 },
+		"troll-male": { x: 784, y: 0, width: 56, height: 56 },
+		"troll-female": { x: 840, y: 0, width: 56, height: 56 },
+	}
 
 	onMount(() => {
 		deck = new Deck({
@@ -74,16 +94,16 @@
 						});
 					}
 				}),
-				new ScatterplotLayer({
-					id: 'ScatterplotLayer',
+				new IconLayer({
+					id: "PlayerIcons",
 					data: players,
 					getPosition: (player: CharacterDataWithCoordinates) => translateCoordinates(player.coordinates),
-					getRadius: () => 2.5,
-					getFillColor: [255, 0, 0],
-					getLineWidth: 10,
-					radiusScale: 6,
+					getIcon: (player: CharacterDataWithCoordinates) => `${player.race.toLowerCase()}-${player.gender.toLowerCase()}`,
+					iconAtlas: "race-texture.png",
+					iconMapping: spriteMapping,
+					getSize: 32,
 					pickable: true
-				})
+				}),
 			]
 		});
 	});
