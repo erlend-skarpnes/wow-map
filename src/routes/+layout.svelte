@@ -25,8 +25,8 @@
 	</svelte:head>
 
 <ThemeProvider theme={theme}>
-	<div class="bg-gray-100 dark:bg-gray-900 min-h-full">
-		<header>
+	<div class="bg-gray-100 dark:bg-gray-900 h-screen">
+		<header class="h-1/10">
 			<Navbar>
 				<NavBrand href="/">
 					<Heading class="text-2xl">World of Noobs</Heading>
@@ -41,7 +41,7 @@
 			</Navbar>
 		</header>
 
-		<main>
+		<main class="h-9/10 overflow-scroll">
 			{@render children()}
 		</main>
 	</div>
