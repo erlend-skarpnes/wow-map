@@ -27,6 +27,34 @@
 	const MAP_SIZE = 256 * 64;
 	const TILE_SIZE = 256;
 
+	const tileLayer = new TileLayer({
+		id: 'tile-layer',
+		data: 'tiles/{z}/{x}/{y}.png',
+		minZoom: -6,
+		maxZoom: 0,
+		tileSize: TILE_SIZE,
+		coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
+		getTileData: ({ index }) => {
+			const { x, y, z } = index;
+			return load(
+				`tiles/${6 + z}/${x}/${y}.png`
+			) as Promise<ImageBitmap>;
+		},
+		renderSubLayers: props => {
+			const [[left, bottom], [right, top]] = props.tile.boundingBox;
+			const { data, ...otherProps } = props;
+			return new BitmapLayer(otherProps, {
+				image: data,
+				bounds: [
+					clamp(left, 0, MAP_SIZE),
+					clamp(top, 0, MAP_SIZE),
+					clamp(right, 0, MAP_SIZE),
+					clamp(bottom, 0, MAP_SIZE)
+				]
+			});
+		}
+	})
+
 	onMount(() => {
 		deck = new Deck({
 			parent: container,
@@ -87,6 +115,20 @@
 			]
 		});
 	});
+
+	$effect(() => {
+		const iconLayer = new IconLayer({
+			id: "PlayerIcons",
+			data: players,
+			getPosition: (player: CharacterDataWithCoordinates) => translateCoordinates(player.coordinates),
+			getIcon: (player: CharacterDataWithCoordinates) => `${player.race.toLowerCase()}-${player.gender.toLowerCase()}`,
+			iconAtlas: "race-texture.png",
+			iconMapping: "race-texture-mapping.json",
+			getSize: 32,
+			pickable: true
+		})
+		deck.setProps({layers: [tileLayer, iconLayer]})
+	})
 
 	onDestroy(() => {
 		deck?.finalize();
