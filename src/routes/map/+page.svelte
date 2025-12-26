@@ -63,7 +63,7 @@
 	<!-- Map Area -->
 	<div class="flex-1">
 		<div class="h-full">
-			<DeckGLMap />
+			<DeckGLMap players={players ?? []} />
 			<!-- <Map players={players ?? []} activePlayer={activePlayerName} />  -->
 		</div>
 	</div>
