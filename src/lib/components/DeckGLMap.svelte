@@ -122,6 +122,7 @@
 			data: players,
 			getPosition: (player: CharacterDataWithCoordinates) => translateCoordinates(player.coordinates),
 			getIcon: (player: CharacterDataWithCoordinates) => `${player.race.toLowerCase()}-${player.gender.toLowerCase()}`,
+			getColor: (player: CharacterDataWithCoordinates) => player.online ? [0, 0, 0, 255] : [0, 0, 0, 120],
 			iconAtlas: "race-texture.png",
 			iconMapping: "race-texture-mapping.json",
 			getSize: 32,
