@@ -85,7 +85,7 @@
 			data: players,
 			getPosition: (player: CharacterDataWithCoordinates) => translateCoordinates(player.coordinates),
 			getIcon: (player: CharacterDataWithCoordinates) => `${player.race.toLowerCase()}-${player.gender.toLowerCase()}`,
-			getColor: (player: CharacterDataWithCoordinates) => player.online ? [0, 0, 0, 255] : [0, 0, 0, 120],
+			getColor: (player: CharacterDataWithCoordinates) => player.online || player.name === hoveredCharacter ? [0, 0, 0, 255] : [0, 0, 0, 120],
 			onHover: (pickingInfo) => {
 				hoveredCharacter = pickingInfo.object?.name
 				return false
@@ -97,7 +97,8 @@
 				getSize: 100
 			},
 			updateTriggers: {
-				getSize: hoveredCharacter
+				getSize: hoveredCharacter,
+				getColor: hoveredCharacter,
 			},
 			pickable: true
 		})
