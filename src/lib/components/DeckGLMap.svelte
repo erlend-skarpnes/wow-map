@@ -9,6 +9,8 @@
 
 	let { players }: {players: CharacterDataWithCoordinates[]} = $props();
 
+	let hoveredCharacter = $state();
+
 	type offset = {x: number, y: number};
 	const scale = 0.605
 	const kalimdorOffset: offset = {x: 3255, y: 8156};
@@ -73,46 +75,7 @@
 				zoom: -4,
 				maxZoom: 0,
 				minZoom: -4
-			},
-			layers: [
-				new TileLayer({
-					id: 'tile-layer',
-					data: 'tiles/{z}/{x}/{y}.png',
-					minZoom: -6,
-					maxZoom: 0,
-					tileSize: TILE_SIZE,
-					coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
-					getTileData: ({ index }) => {
-						const { x, y, z } = index;
-						return load(
-							`tiles/${6 + z}/${x}/${y}.png`
-						) as Promise<ImageBitmap>;
-					},
-					renderSubLayers: props => {
-						const [[left, bottom], [right, top]] = props.tile.boundingBox;
-						const { data, ...otherProps } = props;
-						return new BitmapLayer(otherProps, {
-							image: data,
-							bounds: [
-								clamp(left, 0, MAP_SIZE),
-								clamp(top, 0, MAP_SIZE),
-								clamp(right, 0, MAP_SIZE),
-								clamp(bottom, 0, MAP_SIZE)
-							]
-						});
-					}
-				}),
-				new IconLayer({
-					id: "PlayerIcons",
-					data: players,
-					getPosition: (player: CharacterDataWithCoordinates) => translateCoordinates(player.coordinates),
-					getIcon: (player: CharacterDataWithCoordinates) => `${player.race.toLowerCase()}-${player.gender.toLowerCase()}`,
-					iconAtlas: "race-texture.png",
-					iconMapping: "race-texture-mapping.json",
-					getSize: 32,
-					pickable: true
-				}),
-			]
+			}
 		});
 	});
 
@@ -123,9 +86,19 @@
 			getPosition: (player: CharacterDataWithCoordinates) => translateCoordinates(player.coordinates),
 			getIcon: (player: CharacterDataWithCoordinates) => `${player.race.toLowerCase()}-${player.gender.toLowerCase()}`,
 			getColor: (player: CharacterDataWithCoordinates) => player.online ? [0, 0, 0, 255] : [0, 0, 0, 120],
+			onHover: (pickingInfo) => {
+				hoveredCharacter = pickingInfo.object?.name
+				return false
+			},
 			iconAtlas: "race-texture.png",
 			iconMapping: "race-texture-mapping.json",
-			getSize: 32,
+			getSize: (player: CharacterDataWithCoordinates) => player.name === hoveredCharacter ? 40 : 32,
+			transitions: {
+				getSize: 100
+			},
+			updateTriggers: {
+				getSize: hoveredCharacter
+			},
 			pickable: true
 		})
 		deck.setProps({layers: [tileLayer, iconLayer]})
