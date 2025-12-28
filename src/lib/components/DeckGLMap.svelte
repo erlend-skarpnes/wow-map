@@ -11,13 +11,13 @@
 
 	let hoveredCharacter = $state();
 
-	type offset = {x: number, y: number};
+	type Offset = {x: number, y: number};
 	const scale = 0.605
-	const kalimdorOffset: offset = {x: 3255, y: 8156};
-	const easternKingdomOffset: offset = {x: 11528, y: 5938};
+	const kalimdorOffset: Offset = {x: 3255, y: 8156};
+	const easternKingdomOffset: Offset = {x: 11528, y: 5938};
 
 	const translateCoordinates = (point: Coordinates): [number, number] => {
-		let offset: offset = point.map === 0 ? easternKingdomOffset : kalimdorOffset;
+		let offset: Offset = point.map === 0 ? easternKingdomOffset : kalimdorOffset;
 		const mapX = offset.x - point.y * scale;
 		const mapY = offset.y - point.x * scale;
 		return [mapX, mapY];
