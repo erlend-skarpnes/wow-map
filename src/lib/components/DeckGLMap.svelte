@@ -83,13 +83,6 @@
 		minZoom: -4
 	});
 
-	const handlePlayerCardHovered = (character: CharacterDataWithCoordinates) => {
-		hoveredCharacter = character;
-		if (character) {
-			panToCharacter(character);
-		}
-	};
-
 	const panToCharacter = (character: CharacterDataWithCoordinates) => {
 		const playerCoordinates = translateCoordinates(character.coordinates);
 		const pannedViewState = {
@@ -196,7 +189,7 @@
 		</div>
 		<div class="p-4 max-h-32 lg:max-h-full">
 			{#each characters ?? [] as player}
-				<button onmouseenter={() => handlePlayerCardHovered(player)} onmouseleave={() => hoveredCharacter = undefined}
+				<button onmouseenter={() => hoveredCharacter = player} onmouseleave={() => hoveredCharacter = undefined}
 								onclick={() => zoomToCharacter(player)}>
 					<PlayerCard character={player} />
 				</button>
