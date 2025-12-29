@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { COORDINATE_SYSTEM, Deck, OrthographicView } from '@deck.gl/core';
-	import { BitmapLayer, IconLayer, ScatterplotLayer } from '@deck.gl/layers';
+	import { BitmapLayer, IconLayer, type IconLayerProps } from '@deck.gl/layers';
 	import { TileLayer } from '@deck.gl/geo-layers';
 	import { load } from '@loaders.gl/core';
 	import { clamp } from '@math.gl/core';
 	import type { CharacterDataWithCoordinates, Coordinates } from '$lib/server';
 
-	let { players }: {players: CharacterDataWithCoordinates[]} = $props();
-
-	let hoveredCharacter = $state();
+	let { players, hoveredCharacter = $bindable() }: {players: CharacterDataWithCoordinates[], hoveredCharacter: string | undefined} = $props();
 
 	type Offset = {x: number, y: number};
 	const scale = 0.605
@@ -80,9 +78,7 @@
 	});
 
 	$effect(() => {
-		const iconLayer = new IconLayer({
-			id: "PlayerIcons",
-			data: players,
+		const commonIconLayerProps: Partial<IconLayerProps<CharacterDataWithCoordinates>> = {
 			getPosition: (player: CharacterDataWithCoordinates) => translateCoordinates(player.coordinates),
 			getIcon: (player: CharacterDataWithCoordinates) => `${player.race.toLowerCase()}-${player.gender.toLowerCase()}`,
 			getColor: (player: CharacterDataWithCoordinates) => player.online || player.name === hoveredCharacter ? [0, 0, 0, 255] : [0, 0, 0, 120],
@@ -101,8 +97,18 @@
 				getColor: hoveredCharacter,
 			},
 			pickable: true
+		}
+		const iconLayer = new IconLayer({
+			id: "PlayerIcons",
+			data: players,
+			...commonIconLayerProps
 		})
-		deck.setProps({layers: [tileLayer, iconLayer]})
+		const hoveredIconLayer = new IconLayer({
+			id: "HoveredPlayerIcon",
+			data: players.filter(player => player.name === hoveredCharacter),
+			...commonIconLayerProps
+		})
+		deck.setProps({layers: [tileLayer, iconLayer, hoveredIconLayer]})
 	})
 
 	onDestroy(() => {

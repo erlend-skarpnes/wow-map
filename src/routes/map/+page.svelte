@@ -1,6 +1,5 @@
 <script lang="ts">
-	import Map from '$lib/components/Map.svelte';
-	import type { AccountData, AccountOverviewData, CharacterDataWithCoordinates } from '$lib/server';
+	import type { AccountOverviewData, CharacterDataWithCoordinates } from '$lib/server';
 	import { Checkbox, Heading, P } from 'flowbite-svelte';
 	import PlayerCard from '$lib/components/PlayerCard.svelte';
 	import DeckGLMap from '$lib/components/DeckGLMap.svelte';
@@ -8,7 +7,7 @@
 	let { data }: { data: { players: AccountOverviewData<CharacterDataWithCoordinates>[] } } = $props();
 
 	let showOffline = $state(false);
-	let activePlayerName: string | null = $state(null);
+	let activePlayerName: string | undefined = $state(undefined);
 
 
 	let players = $derived.by(() => {
@@ -28,7 +27,7 @@
 	);
 
 	let setActivePlayer = (player: CharacterDataWithCoordinates | null) => {
-		activePlayerName = player?.name ?? null;
+		activePlayerName = player?.name ?? undefined;
 	}
 
 
@@ -63,8 +62,7 @@
 	<!-- Map Area -->
 	<div class="flex-1">
 		<div class="h-full">
-			<DeckGLMap players={players ?? []} />
-			<!-- <Map players={players ?? []} activePlayer={activePlayerName} />  -->
+			<DeckGLMap players={players ?? []} bind:hoveredCharacter={activePlayerName} />
 		</div>
 	</div>
 </div>
