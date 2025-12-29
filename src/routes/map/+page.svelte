@@ -1,14 +1,10 @@
 <script lang="ts">
 	import type { AccountOverviewData, CharacterDataWithCoordinates } from '$lib/server';
-	import { Checkbox, Heading, P } from 'flowbite-svelte';
-	import PlayerCard from '$lib/components/PlayerCard.svelte';
 	import DeckGLMap from '$lib/components/DeckGLMap.svelte';
 
 	let { data }: { data: { players: AccountOverviewData<CharacterDataWithCoordinates>[] } } = $props();
 
 	let showOffline = $state(false);
-	let activePlayerName: string | undefined = $state(undefined);
-
 
 	let players = $derived.by(() => {
 
@@ -26,43 +22,7 @@
 		}
 	);
 
-	let setActivePlayer = (player: CharacterDataWithCoordinates | null) => {
-		activePlayerName = player?.name ?? undefined;
-	}
-
 
 </script>
 
-<div class="flex flex-col lg:flex-row h-full w-full overflow-hidden">
-	<!-- Sidebar -->
-	<div class="w-64 overflow-y-auto">
-		<div class="p-4">
-			<Heading class="text-xl">Players Online</Heading>
-			<div class="flex justify-between items-center">
-				{#if showOffline}
-					<P>{players.length} total</P>
-				{:else}
-					<P>{players.length} online</P>
-				{/if}
-				<Checkbox bind:checked={showOffline}>Show offline</Checkbox>
-			</div>
-		</div>
-		<div class="p-4 max-h-32 lg:max-h-full">
-			{#each players ?? [] as player}
-				<div onmouseenter={() => setActivePlayer(player)} onmouseleave={() => setActivePlayer(null)} role="listitem">
-					<PlayerCard character={player} />
-				</div>
-
-			{:else}
-				<P>No players online</P>
-			{/each}
-		</div>
-	</div>
-
-	<!-- Map Area -->
-	<div class="flex-1">
-		<div class="h-full">
-			<DeckGLMap players={players ?? []} bind:hoveredCharacter={activePlayerName} />
-		</div>
-	</div>
-</div>
+<DeckGLMap players={data.players.flatMap(player => player.characters) ?? []} />
